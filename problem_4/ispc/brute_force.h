@@ -2,6 +2,7 @@
 #ifndef _BRUTE_FORCE_H
 #define _BRUTE_FORCE_H
 
+#include <stdlib>
 #include <string>
 #include <cstring>
 #include <iostream>
