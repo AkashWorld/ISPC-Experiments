@@ -12,4 +12,4 @@ brute_force.o: brute_force.cpp brute_force.h
 	$(CC) $(CFLAGS) brute_force.cpp
 
 clean:
-	rm *.o netfileserver client
+	rm *.o brute_forcer
