@@ -51,7 +51,7 @@ void str_to_md5(const char* str){
     char * endptr;
     for(int i = 0; i < n;i= i + 2){
         char lett[3];
-        lett[3] = 0;
+        lett[2] = 0;
         strncpy(lett,str + i,2);
         long num = strtol(lett, &endptr, 16);
         digest2[i / 2] = num;
