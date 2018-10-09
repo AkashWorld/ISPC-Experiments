@@ -2,10 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <assert.h>
-//#include <square_root_avx.h>
+#include <square_root_avx.h>
 #include <square_root_normal.h>
-//#include <square_root_ispc.h>
+#include <square_root_ispc.h>
 
 #define FLOAT_COUNT 20000000
 
@@ -35,21 +34,45 @@ int main(int argc, char **argv){
     clock_t start, end;
     float* twenty_mil_fpn = malloc(sizeof(float) * FLOAT_COUNT);
     if(twenty_mil_fpn == NULL){
-        fprintf(stderr, "Could not allocate %ld bytes.\n", sizeof(float) * FLOAT_COUNT);
+        fprintf(stderr, "Could not allocate %ld bytes on line %d.\n", sizeof(float) * FLOAT_COUNT, __LINE__);
         return -1;
     }
     if(!load_floating_numbers(twenty_mil_fpn, FLOAT_COUNT, "20m_square_root.txt")){
         fprintf(stderr, "Error loading floating point numbers.\n");
         return -1;
     }
+
+
     start = clock();
     for(size_t i = 0; i < FLOAT_COUNT; ++i){
-        compute_square_root_normal(*(twenty_mil_fpn + i));
+        float ret = compute_square_root_normal(*(twenty_mil_fpn + i));
     }
     end = clock();
-    printf("Non vectorized computation of square root of %d floating points took %ld cycles.\n", FLOAT_COUNT, end - start);
+    printf("Non vectorized computation of square root of %d " 
+           "floating point numbers took %ld cycles.\n", FLOAT_COUNT, end - start);
     
-    
+/*
+    float *output = malloc(sizeof(float)*FLOAT_COUNT);
+    if(output == NULL){
+        fprintf(stderr, "Could not allocate %ld bytes on line %d.\n", sizeof(float) * FLOAT_COUNT, __LINE__);
+        return -1;
+    }
+    start = clock();
+    compute_square_root_ispc(twenty_mil_fpn, 0, FLOAT_COUNT - 1, output);
+    end = clock();
+    printf("ISPC driven computation of square root of %d "
+           "floating point numbers took %ld cycles.\n", FLOAT_COUNT, end - start);
+    free(output);
+*/
+
+    float *output = malloc(sizeof(float)*FLOAT_COUNT);
+    start = clock();
+    compute_square_root_avx(twenty_mil_fpn, FLOAT_COUNT, output);
+    end = clock();
+    printf("AVX driven computation of square root of %d "
+           "floating point numbers took %ld cycles.\n", FLOAT_COUNT, end - start);
+    free(output);
+
     free(twenty_mil_fpn);
     return 1;
 }
