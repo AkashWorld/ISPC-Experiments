@@ -1,13 +1,13 @@
-Build prerequesites: gcc(c11), ispc, and python3.
-Build instruction:
-  make
-To run the main progam, execute compute_square_root.run
+Build prerequesites: gcc(c11), ispc, and python3.<br />
+Build instruction:<br />
+  make<br />
+To run the main progam, execute compute_square_root.run<br />
 
-Test instruction:
-  make test
-To run the test program, execute test.run
+Test instruction:<br />
+  make test<br />
+To run the test program, execute test.run<br />
 
-genrandom.py: Responsible for ceating a file of 20 million floating point values called 20m_square_root.txt.
-Also creates the square root counterpart of each digit on another file called res_20m_square_root.txt for testing
-purposes.
+genrandom.py: Responsible for ceating a file of 20 million floating point values called 20m_square_root.txt.<br />
+Also creates the square root counterpart of each digit on another file called res_20m_square_root.txt for testing<br />
+purposes.<br />
 
