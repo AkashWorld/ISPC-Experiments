@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <x86intrin.h>
 #include <assert.h>
 
 #define FLOAT_COUNT 20000000
@@ -20,7 +19,7 @@ __always_inline float _compute_square_root_normal(const float a){
     float final_approx = 0;
     float current_difference = 1;
     while(current_difference > difference){
-        final_approx = (1/2)*(previous_approx + (a/previous_approx));
+        final_approx = (.5)*(previous_approx + (a/previous_approx));
         current_difference = abs(final_approx - previous_approx);
         previous_approx = final_approx;
     }
@@ -34,40 +33,12 @@ void compute_all_square_roots_normal(const float *float_numbers, const size_t fl
     }
 }
 
-//TODO: Add boundry checks, lucky that 20,000,000 % (256/32) = 0
-void compute_square_root_avx(const float *numbers, const size_t count, float* output)
-{
-    const __m256 _of_neg_zero = _mm256_set1_ps(-0.0);
-    const __m256 _difference = _mm256_set1_ps(.0001f);
-    const __m256 _half = _mm256_set1_ps(.5f);
-    //compute variables
-    __m256 _a_div_prev, _final_approx, _comparisons;
-    int boolean;
-    for(size_t i = 0; i < count; i += (256/32)){
-        const __m256 _a = _mm256_loadu_ps(numbers + i);
-        __m256 _previous_approx = _mm256_set1_ps(2.0f);
-               _previous_approx = _mm256_mul_ps(_a, _previous_approx);
-        __m256 _current_difference = _mm256_set1_ps(1.0f);
-    compute:
-        _a_div_prev = _mm256_div_ps(_a, _previous_approx);
-        _final_approx = _mm256_add_ps(_previous_approx, _a_div_prev);
-        _final_approx = _mm256_mul_ps(_final_approx, _half);
-        _current_difference = _mm256_sub_ps(_previous_approx, _final_approx);
-        _current_difference = _mm256_andnot_ps(_of_neg_zero, _current_difference); //abs
-        _comparisons = _mm256_cmp_ps(_current_difference, _difference, _CMP_LT_OQ);
-        boolean = _mm256_movemask_ps(_comparisons);
-        if(boolean == 0){
-            _previous_approx = _final_approx;
-            goto compute;
-        } else{
-            _mm256_storeu_ps(output + i, _final_approx);
-            continue;
-        }
-    }
+extern "C" {
+    void compute_square_root_avx(const float *numbers, const size_t count, float* output);
 }
 
+
 #ifdef __cplusplus
-namespace ispc { /* namespace */
 #endif // __cplusplus
 
 #ifndef __ISPC_ALIGN__
@@ -89,14 +60,13 @@ namespace ispc { /* namespace */
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 extern "C" {
 #endif // __cplusplus
-    extern void compute_square_root_ispc(const float * float_numbers, const uint32_t first_index, const uint32_t second_index, float * output);
+    extern void compute_square_root_ispc_tasks(const float * float_numbers, const uint32_t count, float * output, const uint32_t task_count);
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 } /* end extern C */
 #endif // __cplusplus
 
 
 #ifdef __cplusplus
-} /* namespace */
 #endif // __cplusplus
 
 static int load_floating_numbers(float* numbers, const size_t number_count, const char* filename){
