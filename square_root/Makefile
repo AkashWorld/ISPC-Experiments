@@ -15,7 +15,7 @@ compute_square_root: main.c square_root_ispc.o
 	gcc ${CFLAGS} ${LFLAGS} -o compute_square_root.run main.c square_root_ispc.o
 
 square_root_ispc.o: square_root.ispc
-	ispc -o square_root_ispc.o square_root.ispc -h ${CURDIR}/square_root_ispc.h
+	ispc -o square_root_ispc.o square_root.ispc
 
 test: test.c
 	gcc ${CFLAGS} -o test.run test.c

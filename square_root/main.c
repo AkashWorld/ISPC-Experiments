@@ -2,9 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <square_root_avx.h>
-#include <square_root_normal.h>
-#include <square_root_ispc.h>
+#include <square_root.h>
 
 #define FLOAT_COUNT 20000000
 
@@ -30,29 +28,20 @@ int load_floating_numbers(float* numbers, const size_t number_count, const char*
     return 1;
 }
 
-int main(int argc, char **argv){
+int profile_sequential(const float *twenty_mil_fpn, float *output){
     clock_t start, end;
-    float* twenty_mil_fpn = malloc(sizeof(float) * FLOAT_COUNT);
-    if(twenty_mil_fpn == NULL){
-        fprintf(stderr, "Could not allocate %ld bytes on line %d.\n", sizeof(float) * FLOAT_COUNT, __LINE__);
-        return -1;
-    }
-    if(!load_floating_numbers(twenty_mil_fpn, FLOAT_COUNT, "20m_square_root.txt")){
-        fprintf(stderr, "Error loading floating point numbers.\n");
-        return -1;
-    }
-
-
+    output = malloc(sizeof(float)*FLOAT_COUNT);
     start = clock();
-    for(size_t i = 0; i < FLOAT_COUNT; ++i){
-        float ret = compute_square_root_normal(*(twenty_mil_fpn + i));
-    }
+    compute_all_square_roots_normal(twenty_mil_fpn, FLOAT_COUNT, output);
     end = clock();
     printf("Non vectorized computation of square root of %d " 
            "floating point numbers took %ld cycles.\n", FLOAT_COUNT, end - start);
-    
-/*
-    float *output = malloc(sizeof(float)*FLOAT_COUNT);
+    free(output);
+    return 1;
+}
+
+int profile_ispc(const float *twenty_mil_fpn, float *output){
+    clock_t start, end;output = malloc(sizeof(float)*FLOAT_COUNT);
     if(output == NULL){
         fprintf(stderr, "Could not allocate %ld bytes on line %d.\n", sizeof(float) * FLOAT_COUNT, __LINE__);
         return -1;
@@ -63,16 +52,35 @@ int main(int argc, char **argv){
     printf("ISPC driven computation of square root of %d "
            "floating point numbers took %ld cycles.\n", FLOAT_COUNT, end - start);
     free(output);
-*/
+    return 1;
+}
 
-    float *output = malloc(sizeof(float)*FLOAT_COUNT);
+int profile_avx(const float *twenty_mil_fpn, float *output){
+    clock_t start, end;
+    output = malloc(sizeof(float)*FLOAT_COUNT);
     start = clock();
     compute_square_root_avx(twenty_mil_fpn, FLOAT_COUNT, output);
     end = clock();
     printf("AVX driven computation of square root of %d "
            "floating point numbers took %ld cycles.\n", FLOAT_COUNT, end - start);
     free(output);
+    return 1;
+}
 
+int main(int argc, char **argv){
+    float* twenty_mil_fpn = malloc(sizeof(float) * FLOAT_COUNT);
+    if(twenty_mil_fpn == NULL){
+        fprintf(stderr, "Could not allocate %ld bytes on line %d.\n", sizeof(float) * FLOAT_COUNT, __LINE__);
+        return -1;
+    }
+    if(!load_floating_numbers(twenty_mil_fpn, FLOAT_COUNT, "20m_square_root.txt")){
+        fprintf(stderr, "Error loading floating point numbers.\n");
+        return -1;
+    }
+    float *output;
+    profile_sequential(twenty_mil_fpn, output);
+    //profile_ispc(twenty_mil_fpn, output);
+    profile_avx(twenty_mil_fpn, output);
     free(twenty_mil_fpn);
     return 1;
 }
