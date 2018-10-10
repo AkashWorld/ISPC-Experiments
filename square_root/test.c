@@ -3,36 +3,12 @@
 #include <string.h>
 #include <assert.h>
 #include <square_root.h>
-
-#define FLOAT_COUNT 20000000
-
-int load_floating_numbers(float* numbers, const size_t number_count, const char* filename){
-    FILE *file = fopen(filename, "r");
-    if(file == NULL){
-        fprintf(stderr, "File %s could not be opened!\n", filename);
-        fclose(file);
-        return 0;
-    }
-    char float_line[256] = {};
-    for(size_t i = 0; i < number_count; ++i){
-        memset(float_line, 0, 256);
-        if(fgets(float_line, 256, file) == NULL && i + 1 != number_count){
-            fprintf(stderr, "Could not read the expected number of floating point numbers."
-                    "Expected: %ld, Read: %ld\n", number_count, i);
-            fclose(file);
-            return 0;
-        }
-        *(numbers + i) = atof(float_line);
-    }
-    fclose(file);
-    return 1;
-}
-
 /*
 #define SIMPLE
 #define BRUTE_FORCE
 */
 #define AVX_TEST
+#define ISPC_TEST
 
 int main(int argc, char **argv){
     //Compute Square Root Normal
@@ -47,13 +23,24 @@ int main(int argc, char **argv){
     assert(abs(1.004987562112089 - _compute_square_root_normal(1.01)) < .0001);
     fprintf(stderr, "Simple normal square root calculations passed.\n");
 #endif
+#if defined(AVX_TEST) || defined(ISPC_TEST)
+float new_test[8] = {2, 3.234353454, 2.5, 7.33, 1, 0.5, 3.1, 2.2};
+float output[8] = {};
+#endif
 #if defined(AVX_TEST)
-    float new_test[8] = {2, 3.234353454, 2.5, 7.33, 1, 0.5, 3.1, 2.2};
-    float output[8] = {};
     fprintf(stderr, "Currently computing %f %f %f %f %f %f %f %f\n", *(new_test + 0), *(new_test + 1)
     , *(new_test + 2), *(new_test + 3), *(new_test + 4), *(new_test + 5), *(new_test + 6)
     , *(new_test + 7));
     compute_square_root_avx(new_test, 8, output);
+    fprintf(stderr, "Final computing %f %f %f %f %f %f %f %f\n", *(output + 0), *(output + 1)
+    , *(output + 2), *(output + 3), *(output + 4), *(output + 5), *(output + 6)
+    , *(output + 7));
+#endif
+#if defined(ISPC_TEST)
+    fprintf(stderr, "Currently computing %f %f %f %f %f %f %f %f\n", *(new_test + 0), *(new_test + 1)
+    , *(new_test + 2), *(new_test + 3), *(new_test + 4), *(new_test + 5), *(new_test + 6)
+    , *(new_test + 7));
+    compute_square_root_ispc(new_test, 0, 8, output);
     fprintf(stderr, "Final computing %f %f %f %f %f %f %f %f\n", *(output + 0), *(output + 1)
     , *(output + 2), *(output + 3), *(output + 4), *(output + 5), *(output + 6)
     , *(output + 7));

@@ -6,6 +6,8 @@
 #include <x86intrin.h>
 #include <assert.h>
 
+#define FLOAT_COUNT 20000000
+
 /*
  * Reference for computational logic:
  * https://www.math.upenn.edu/~kazdan/202F09/sqrt.pdf
@@ -97,4 +99,27 @@ extern "C" {
 } /* namespace */
 #endif // __cplusplus
 
+static int load_floating_numbers(float* numbers, const size_t number_count, const char* filename){
+    FILE *file = fopen(filename, "r");
+    if(file == NULL){
+        fprintf(stderr, "File %s could not be opened!\n", filename);
+        fclose(file);
+        return 0;
+    }
+    char float_line[256] = {};
+    for(size_t i = 0; i < number_count; ++i){
+        memset(float_line, 0, 256);
+        if(fgets(float_line, 256, file) == NULL && i + 1 != number_count){
+            fprintf(stderr, "Could not read the expected number of floating point numbers."
+                    "Expected: %ld, Read: %ld\n", number_count, i);
+            fclose(file);
+            return 0;
+        }
+        *(numbers + i) = atof(float_line);
+    }
+    fclose(file);
+    return 1;
+}
+
 #endif
+

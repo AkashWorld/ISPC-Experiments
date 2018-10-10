@@ -14,11 +14,11 @@ endif
 compute_square_root: main.c square_root_ispc.o
 	gcc ${CFLAGS} ${LFLAGS} -o compute_square_root.run main.c square_root_ispc.o
 
-square_root_ispc.o: square_root.ispc
-	ispc -o square_root_ispc.o square_root.ispc
+square_root_ispc.o: square_root_ispc.c
+	ispc -o square_root_ispc.o square_root_ispc.c
 
-test: test.c
-	gcc ${CFLAGS} -o test.run test.c
+test: test.c square_root_ispc.o
+	gcc ${CFLAGS} -o test.run test.c square_root_ispc.o
 
 clean: 
 	rm *.run *.o
