@@ -79,6 +79,7 @@ void ISPCSync(void *handle){
     for(int i = 0; i < task->thread_count; ++i){
         pthread_join(*(task->thread_list + i), NULL);
     }
+    free(task->arg_struct->data);
     free(task->arg_struct);
     free(task->thread_list);
     free(handle);
