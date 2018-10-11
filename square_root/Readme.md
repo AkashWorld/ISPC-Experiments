@@ -1,4 +1,4 @@
-Build prerequesites: gcc(c11), ispc, and python3. Ensure that all three of these are in the PATH environment variable<br />
+Build prerequesites: g++, gcc, ispc, and python3. Ensure that all three of these are in the PATH environment variable<br />
 Build instruction:<br />
   make<br />
 To run the main progam, execute compute_square_root.run<br />
