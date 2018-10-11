@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 #include <square_root.h>
+#include <errno.h>
 /*
 #define SIMPLE
 #define BRUTE_FORCE
@@ -45,7 +46,11 @@ float output[8] = {};
     , *(output + 7));
 #endif
 #if defined(BRUTE_FORCE) || defined(ALL)
-    float *twenty_mil_fp = (float*)malloc(sizeof(float) * FLOAT_COUNT);
+    float *twenty_mil_fp; //= (float*)aligned_alloc(sizeof(float), sizeof(float) * FLOAT_COUNT);
+    if(posix_memalign((void**)&twenty_mil_fp, sizeof(float) * 8, FLOAT_COUNT*sizeof(float)) == 1
+        || twenty_mil_fp == NULL){
+        perror("Allocation of %ld bytes unsuccessful.");
+    }
     float *twenty_mil_sqrtfp = (float*)malloc(sizeof(float) * FLOAT_COUNT);
     if(twenty_mil_fp == NULL || twenty_mil_sqrtfp == NULL ||
         !load_floating_numbers(twenty_mil_fp, FLOAT_COUNT, "20m_square_root.txt") ||
@@ -60,14 +65,22 @@ float output[8] = {};
         assert(abs(computed_root - *(twenty_mil_sqrtfp + i)) < .0001f);
     }
     fprintf(stderr, "Brute forced normal calculation comparisons with %d values test passed.\n", FLOAT_COUNT);
-    float *output_ispc = (float*)malloc(sizeof(float)*FLOAT_COUNT);
+    float *output_ispc;// = (float*)aligned_alloc(sizeof(float), sizeof(float) * FLOAT_COUNT);
+    if(posix_memalign((void**)&output_ispc, sizeof(float) * 8, FLOAT_COUNT*sizeof(float)) == 1
+        || output_ispc == NULL){
+        perror("Allocation of %ld bytes unsuccessful.");
+    }
     compute_square_root_ispc_tasks(twenty_mil_fp, FLOAT_COUNT, output_ispc, 1);
     for(size_t i = 0; i < FLOAT_COUNT; ++i){
         assert(abs(*(output_ispc + i) - *(twenty_mil_sqrtfp + i)) < .0001f);
     }
     free(output_ispc);
     fprintf(stderr, "Brute forced ISPC calculation comparisons with %d values test passed.\n", FLOAT_COUNT);
-    float *output_avx = (float*)malloc(sizeof(float)*FLOAT_COUNT);
+    float *output_avx;// = (float*)aligned_alloc(sizeof(float), sizeof(float) * FLOAT_COUNT);
+    if(posix_memalign((void**)&output_avx, sizeof(float) * 8, FLOAT_COUNT*sizeof(float)) == 1
+        || output_avx == NULL){
+        perror("Allocation of %ld bytes unsuccessful.");
+    }
     compute_square_root_avx(twenty_mil_fp, FLOAT_COUNT, output_avx);
     for(size_t i = 0; i < FLOAT_COUNT; ++i){
         assert(abs(*(output_avx + i) - *(twenty_mil_sqrtfp + i)) < .0001f);

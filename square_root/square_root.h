@@ -26,8 +26,8 @@ __always_inline float _compute_square_root_normal(const float a){
     return final_approx;
 }
 
-void compute_all_square_roots_normal(const float *float_numbers, const size_t float_count,
-                                     float* output){
+void compute_all_square_roots_normal(const float *float_numbers, 
+                                     const size_t float_count, float* output){
     for(size_t i = 0; i < float_count; ++i){
         *(output + i) = _compute_square_root_normal(*(float_numbers + i));
     }
@@ -76,7 +76,7 @@ static int load_floating_numbers(float* numbers, const size_t number_count, cons
         fclose(file);
         return 0;
     }
-    char float_line[256] = {};
+    char float_line[256] __attribute__ ((aligned(256*sizeof(char))));
     for(size_t i = 0; i < number_count; ++i){
         memset(float_line, 0, 256);
         if(fgets(float_line, 256, file) == NULL && i + 1 != number_count){

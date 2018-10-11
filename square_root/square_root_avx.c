@@ -10,7 +10,7 @@ void compute_square_root_avx(const float *numbers, const size_t count, float* ou
     __m256 _a_div_prev, _final_approx, _comparisons;
     int boolean;
     for(size_t i = 0; i < count; i += (256/32)){
-        const __m256 _a = _mm256_loadu_ps(numbers + i);
+        const __m256 _a = _mm256_load_ps(numbers + i);
         __m256 _previous_approx = _mm256_set1_ps(2.0f);
                _previous_approx = _mm256_mul_ps(_a, _previous_approx);
         __m256 _current_difference = _mm256_set1_ps(1.0f);
@@ -26,7 +26,7 @@ void compute_square_root_avx(const float *numbers, const size_t count, float* ou
             _previous_approx = _final_approx;
             goto compute;
         } else{
-            _mm256_storeu_ps(output + i, _final_approx);
+            _mm256_store_ps(output + i, _final_approx);
             continue;
         }
     }
