@@ -24,14 +24,16 @@ int main(int argc, char **argv){
     fprintf(stderr, "Simple normal square root calculations passed.\n");
 #endif
 #if defined(AVX_TEST) || defined(ISPC_TEST)
-float new_test[8] = {2, 3.234353454, 2.5, 7.33, 1, 0.5, 3.1, 2.2};
-float output[8] = {};
+    float new_test[8] __attribute__ ((aligned(8 * sizeof(float))));
+    float output[8] __attribute__ ((aligned(8 * sizeof(float)))); 
+    new_test[0] = 1; new_test[1] = 2; new_test[2] = 3; new_test[3] = 4;
+    new_test[4] = 5; new_test[5] = 6; new_test[6] = 7; new_test[7] = 8;
 #endif
 #if defined(ISPC_TEST)
     fprintf(stderr, "Currently computing ISPC: %f %f %f %f %f %f %f %f\n", *(new_test + 0), *(new_test + 1)
     , *(new_test + 2), *(new_test + 3), *(new_test + 4), *(new_test + 5), *(new_test + 6)
     , *(new_test + 7));
-    compute_square_root_ispc_tasks(new_test, 8, output, 1);
+    compute_square_root_ispc(new_test, 8, 0, output);
     fprintf(stderr, "Final ISPC Results: %f %f %f %f %f %f %f %f\n", *(output + 0), *(output + 1)
     , *(output + 2), *(output + 3), *(output + 4), *(output + 5), *(output + 6)
     , *(output + 7));
@@ -70,7 +72,7 @@ float output[8] = {};
         || output_ispc == NULL){
         perror("Allocation of %ld bytes unsuccessful.");
     }
-    compute_square_root_ispc_tasks(twenty_mil_fp, FLOAT_COUNT, output_ispc, 1);
+    compute_square_root_ispc(twenty_mil_fp, FLOAT_COUNT, 0, output_ispc);
     for(size_t i = 0; i < FLOAT_COUNT; ++i){
         assert(abs(*(output_ispc + i) - *(twenty_mil_sqrtfp + i)) < .0001f);
     }

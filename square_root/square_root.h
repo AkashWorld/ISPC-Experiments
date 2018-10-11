@@ -60,7 +60,7 @@ extern "C" {
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 extern "C" {
 #endif // __cplusplus
-    extern void compute_square_root_ispc_tasks(const float * float_numbers, const uint32_t count, float * output, const uint32_t task_count);
+    extern void compute_square_root_ispc(const float * float_numbers, const uint32_t count, const uint32_t first_index, float * output);
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 } /* end extern C */
 #endif // __cplusplus

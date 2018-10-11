@@ -7,8 +7,8 @@ LFLAGS = -pthread
 
 all: compute_square_root
 
-compute_square_root: main.c square_root_ispc.o tasksys.o square_root_avx.o generate_fp_numbers
-	${GPP} ${CFLAGS} ${LFLAGS} -o compute_square_root.run main.c tasksys.o square_root_ispc.o square_root_avx.o
+compute_square_root: main.c square_root_ispc.o square_root_avx.o generate_fp_numbers
+	${GPP} ${CFLAGS} ${LFLAGS} -o compute_square_root.run main.c square_root_ispc.o square_root_avx.o
 
 square_root_ispc.o: square_root_ispc.c
 	ispc -o square_root_ispc.o square_root_ispc.c --pic
@@ -16,11 +16,8 @@ square_root_ispc.o: square_root_ispc.c
 square_root_avx.o: square_root_avx.c
 	${GCC} ${CFLAGS} -o square_root_avx.o -c square_root_avx.c
 
-tasksys.o: tasksys.cpp
-	${GPP} -o tasksys.o -c tasksys.cpp -fPIC ${LFLAGS}
-
-test: test.c square_root_ispc.o square_root_avx.o generate_fp_numbers tasksys.o
-	${GPP} ${CFLAGS} ${LFLAGS} -o test.run test.c square_root_ispc.o square_root_avx.o tasksys.o 
+test: test.c square_root_ispc.o square_root_avx.o generate_fp_numbers
+	${GPP} ${CFLAGS} ${LFLAGS} -o test.run test.c square_root_ispc.o square_root_avx.o 
 
 generate_fp_numbers:
 ifeq (,$(wildcard ./20m_square_root.txt))
