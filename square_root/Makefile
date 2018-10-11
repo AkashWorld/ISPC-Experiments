@@ -1,23 +1,35 @@
 GCC = gcc
 GPP = g++
-CFLAGS = -g -I${CURDIR} -mavx
+
+CONC_DIR = ../concurrency
+
+CFLAGS = -g -I${CURDIR} -I${CURDIR}/..${CONC_DIR} -mavx
 LFLAGS = -pthread
+OPTFLAG = -O3
 
 #check if floating point numbers were generated
 
 all: compute_square_root
 
-compute_square_root: main.c square_root_ispc.o square_root_avx.o generate_fp_numbers
-	${GCC} ${CFLAGS} ${LFLAGS} -o compute_square_root.run main.c square_root_ispc.o square_root_avx.o
+debug: set_debug_opt_flag compute_square_root
+	
+set_debug_opt_flag: 
+	$(eval OPTFLAG = -O0)
+
+compute_square_root: main.c tasks.o square_root_ispc.o square_root_avx.o generate_fp_numbers
+	${GCC} ${CFLAGS} ${LFLAGS} ${OPTFLAG} -o compute_square_root.run main.c tasks.o square_root_ispc.o square_root_avx.o
 
 square_root_ispc.o: square_root_ispc.c
-	ispc -o square_root_ispc.o square_root_ispc.c --pic
+	ispc -g ${OPTFLAG} -o square_root_ispc.o square_root_ispc.c --pic --target=avx2-i32x8
 
 square_root_avx.o: square_root_avx.c
-	${GCC} ${CFLAGS} -o square_root_avx.o -c square_root_avx.c
+	${GCC} ${CFLAGS} ${OPTFLAG} -o square_root_avx.o -c square_root_avx.c
+
+tasks.o: ${CONC_DIR}/tasks.c
+	${GCC} ${OPTFLAG} ${CFLAGS} -o tasks.o -c ../concurrency/tasks.c
 
 test: test.c square_root_ispc.o square_root_avx.o generate_fp_numbers
-	${GCC} ${CFLAGS} ${LFLAGS} -o test.run test.c square_root_ispc.o square_root_avx.o 
+	${GCC} ${OPTFLAG} ${CFLAGS} ${LFLAGS} -o test.run test.c square_root_ispc.o square_root_avx.o 
 
 generate_fp_numbers:
 ifeq (,$(wildcard ./20m_square_root.txt))
