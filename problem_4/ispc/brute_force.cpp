@@ -17,27 +17,25 @@ int main(){
 }
 
 // The main recursive method to print all possible strings of length "length"
-void gen_strs(const char str[],string prefix,const int n, const int lenght){
+void gen_strs(const char str[],string prefix,const int n, const int length){
     if(cracked){
         return;
-    } else if (lenght == 1){
-      for (int j = 0; j < n; j++){
-            // cout << prefix + str[j] << endl;
-            string pass = prefix + str[j];
-            
-            MD5((unsigned char*)pass.c_str(), pass.length(), (unsigned char*)&digest); 
-            if(memcmp(digest,digest2,MD5_DIGEST_LENGTH) == 0){
-                cout<< "PASSWORD: " << pass << endl;
-                cracked = 1;
-                return;
-            }
-            // md5_to_str(digest);
-        }
     } else{
-            for (int i = 0; i < n; i++){
-              gen_strs(str, prefix + str[i], n, lenght - 1);
-            }
+        MD5((unsigned char*)prefix.c_str(), prefix.length(), (unsigned char*)&digest); 
+        if(memcmp(digest,digest2,MD5_DIGEST_LENGTH) == 0){
+            cout<< "PASSWORD: " << prefix << endl;
+            cracked = 1;
+            return;
         }
+        if (prefix.length() < length){
+            for (int i = 0; i < n; i++){
+              gen_strs(str, prefix + str[i], n, length);
+            }
+        } else{
+            return;
+        }
+
+    }
 }
 
 void gen_arr(char arr[]){
