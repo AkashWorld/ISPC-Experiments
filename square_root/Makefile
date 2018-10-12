@@ -3,7 +3,7 @@ GPP = g++
 
 CONC_DIR = ../concurrency
 
-CFLAGS = -g -I${CURDIR} -I${CURDIR}/..${CONC_DIR} -mavx
+CFLAGS = -g -I${CURDIR} -I${CURDIR}/..${CONC_DIR} -mavx -std=c11
 LFLAGS = -pthread
 OPTFLAG = -O3
 
