@@ -33,9 +33,9 @@ void compute_all_square_roots_normal(const float *float_numbers,
     }
 }
 
-
-void compute_square_root_avx(const float *numbers, const size_t count, float* output);
-
+extern "C" {
+    void compute_square_root_avx(const float *numbers, const size_t count, float* output);
+}
 
 
 #ifdef __cplusplus
