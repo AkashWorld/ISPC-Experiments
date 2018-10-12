@@ -62,7 +62,7 @@ void ISPCLaunch(void **handlePtr, void *f, void *data, int count0, int count1, i
     if(handlePtr == NULL)
         allocate_task_structure(handlePtr);
     task_id *task = (task_id*)*handlePtr;
-    task->thread_count = count0 + count1 + count2;
+    task->thread_count = count0 * count1 * count2;
     task->thread_list = aligned_alloc(task->thread_count * sizeof(pthread_t), sizeof(pthread_t));
     if(task->thread_list == NULL){
         fprintf(stderr,"Error allocating aligned memory for ISPC tasks. %s, %d", __FILE__, __LINE__);
