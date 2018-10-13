@@ -1,1 +1,1 @@
-g++ brute_force.cpp -o brute_forcer -lssl -lcrypto -L/usr/local/opt/openssl/lib -I/usr/local/opt/openssl/include
+g++ brute_force.cpp -g -Wall -o brute_forcer -lssl -lcrypto -L/usr/local/opt/openssl/lib -I/usr/local/opt/openssl/include
