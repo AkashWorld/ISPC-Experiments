@@ -1,6 +1,3 @@
-GCC = gcc
-GPP = g++
-
 CONC_DIR = ../concurrency
 
 CFLAGS = -g -I${CURDIR} -mavx
@@ -15,10 +12,10 @@ set_debug_opt_flag:
 	$(eval OPTFLAG = -O0)
 
 tasks.o: tasks.c
-	${GCC} ${OPTFLAG} ${CFLAGS} ${LFLAGS} -o tasks.o -c tasks.c
+	${CC} ${OPTFLAG} ${CFLAGS} ${LFLAGS} -o tasks.o -c tasks.c
 
 tasksys.o: tasksys.cpp
-	${GPP} ${OPTFLAG} ${CFLAGS} ${LFLAGS} -o tasksys.o -c tasksys.cpp
+	${CXX} ${OPTFLAG} ${CFLAGS} ${LFLAGS} -o tasksys.o -c tasksys.cpp -D ISPC_USE_PTHREADS_FULLY_SUBSCRIBED
 
 
 clean: 

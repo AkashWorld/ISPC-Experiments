@@ -1,6 +1,3 @@
-GCC = gcc
-GPP = g++
-
 CONC_DIR = ../concurrency
 
 CFLAGS = -g -I${CURDIR} -I${CURDIR}/..${CONC_DIR} -mavx -std=c11
@@ -17,16 +14,16 @@ set_debug_opt_flag:
 	$(eval OPTFLAG = -O0)
 
 compute_square_root: main.c ${CONC_DIR}/tasksys.o square_root_ispc.o square_root_avx.o generate_fp_numbers
-	${GPP} ${CFLAGS} ${LFLAGS} ${OPTFLAG} -o compute_square_root.run main.c ${CONC_DIR}/tasksys.o square_root_ispc.o square_root_avx.o
+	${CXX} ${CFLAGS} ${LFLAGS} ${OPTFLAG} -o compute_square_root.run main.c ${CONC_DIR}/tasksys.o square_root_ispc.o square_root_avx.o
 
 square_root_ispc.o: square_root_ispc.c
 	ispc -g ${OPTFLAG} -o square_root_ispc.o square_root_ispc.c --pic --target=avx2-i32x8
 
 square_root_avx.o: square_root_avx.c
-	${GCC} ${CFLAGS} ${OPTFLAG} -o square_root_avx.o -c square_root_avx.c
+	${CC} ${CFLAGS} ${OPTFLAG} -o square_root_avx.o -c square_root_avx.c
 
 test: test.c square_root_ispc.o square_root_avx.o generate_fp_numbers
-	${GCC} ${OPTFLAG} ${CFLAGS} ${LFLAGS} -o test.run test.c square_root_ispc.o square_root_avx.o 
+	${CC} ${OPTFLAG} ${CFLAGS} ${LFLAGS} -o test.run test.c square_root_ispc.o square_root_avx.o 
 
 tasksys.o: ${CONC_DIR}/concurrency.mk
 	make tasksys.o
