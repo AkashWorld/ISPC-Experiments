@@ -34,7 +34,8 @@ namespace ispc { /* namespace */
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 extern "C" {
 #endif // __cplusplus
-    extern void compare_hashes(const int8_t * phrases, const uint64_t * hashes_low, const uint64_t * hashes_up, const uint64_t * digest, uint8_t * output, uint32_t length, int32_t count);
+    extern void compare_hashes(const int8_t * phrases, const uint64_t * digest, uint8_t * output, uint32_t length, int32_t count);
+    extern void compare_hashes_task_launcher(const int8_t * phrases, const uint64_t * digest, uint8_t * output, uint32_t length, int32_t count, int32_t tasks);
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 } /* end extern C */
 #endif // __cplusplus
