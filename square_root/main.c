@@ -152,14 +152,9 @@ int main(int argc, char **argv){
     profile_ispc_pthreads(twenty_mil_fpn, output, 8);
     profile_ispc_pthreads(twenty_mil_fpn, output, 9);
     */
-    profile_ispc_tasks(twenty_mil_fpn, output, 1);
-    profile_ispc_tasks(twenty_mil_fpn, output, 2);
-    profile_ispc_tasks(twenty_mil_fpn, output, 3);
-    profile_ispc_tasks(twenty_mil_fpn, output, 4);
-    profile_ispc_tasks(twenty_mil_fpn, output, 5);
-    profile_ispc_tasks(twenty_mil_fpn, output, 6);
-    profile_ispc_tasks(twenty_mil_fpn, output, 7);
-    profile_ispc_tasks(twenty_mil_fpn, output, 8);
+    for(size_t i = 1; i <= 8; ++i){
+        profile_ispc_tasks(twenty_mil_fpn, output, i);
+    }
     profile_avx(twenty_mil_fpn, output);
     free(output);
     free(twenty_mil_fpn);
