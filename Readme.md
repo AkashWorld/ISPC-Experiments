@@ -9,6 +9,7 @@ All problems, their build files, and their write-ups are in their individual fol
 
 ### Prerequisites
 
+Posix compliant standard c library.
 Ensure that the environmental PATH has access to the following:
 g++, gcc, python3, and ispc
 
