@@ -3,7 +3,7 @@ EXECUTABLES = python3 ispc ${CC} ${CXX}
 K := $(foreach exec,$(EXECUTABLES),\
         $(if $(shell which $(exec)),some string,$(error "No $(exec) in PATH)))
 
-SQRT = ./square_root
+SQRT = ./problem_2
 CONC = ./concurrency
 all: ${SQRT}/Makefile ${CONC}/Makefile
 	cd ${SQRT} && make
