@@ -162,10 +162,10 @@ export void compare_hashes(uniform const int8 phrases[], uniform const unsigned 
 }
 
 task void compare_hashes_task(uniform const int8 phrases[],
-		 uniform const unsigned int64 digest[], uniform unsigned int8 output[], uniform size_t length, uniform int64 count, uniform int task_size){
+		 uniform const unsigned int64 digest[], uniform unsigned int8 output[], uniform size_t length, uniform unsigned int count, uniform int task_size){
 
 			uniform int start = taskIndex * task_size;
-			uniform int end = min(task_size * (taskIndex + 1), count);
+			uniform int end = min(task_size * (taskIndex + 1), (const uniform unsigned int)count);
             if(count - end < task_size){
                 end += count - end;
             }

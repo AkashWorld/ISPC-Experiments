@@ -19,7 +19,7 @@ int main(int argc, char * argv[]){
     unsigned char  * digest2 = (unsigned char * )calloc(1,MD5_DIGEST_LENGTH);
     // gen_strs(str, "", n, length);  //Note: this function works on all cases and not just the case above
     uint8_t * output = new uint8_t[length]();
-    int count = pow(62,length);
+    unsigned int count = pow(62,length);
     char * phrases;
     // for(int i = 0; i < count;i++){
     //     phrases[i] = (char*)calloc(length, sizeof(char));
@@ -43,7 +43,6 @@ int main(int argc, char * argv[]){
         end = Clock::now();
         free(phrases);
         elapsed += duration_cast<milliseconds>(end - start).count();
-        printf("%ld\n",elapsed);
         if(strlen((char*)output) > 0){
             printf("[AVX]Password: %s\n",output);
             break;
