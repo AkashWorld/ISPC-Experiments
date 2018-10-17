@@ -134,6 +134,7 @@ int main(int argc, char **argv){
     profile_ispc_pthreads(twenty_mil_fpn, output, 7);
     profile_ispc_pthreads(twenty_mil_fpn, output, 8);
     profile_ispc_pthreads(twenty_mil_fpn, output, 9);
+    /*
     profile_ispc_tasks(twenty_mil_fpn, output, 1);
     profile_ispc_tasks(twenty_mil_fpn, output, 2);
     profile_ispc_tasks(twenty_mil_fpn, output, 3);
@@ -142,7 +143,7 @@ int main(int argc, char **argv){
     profile_ispc_tasks(twenty_mil_fpn, output, 6);
     profile_ispc_tasks(twenty_mil_fpn, output, 7);
     profile_ispc_tasks(twenty_mil_fpn, output, 8);
-    profile_ispc_tasks(twenty_mil_fpn, output, 9);
+    profile_ispc_tasks(twenty_mil_fpn, output, 9);*/
     profile_avx(twenty_mil_fpn, output);
     free(output);
     free(twenty_mil_fpn);

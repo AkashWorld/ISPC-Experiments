@@ -3,7 +3,7 @@ export void compute_square_root_ispc(uniform const float float_numbers[],
                                      uniform const size_t first_index,
                                      uniform float output[]){
     uniform const float difference = .0001; // 10^-4
-    foreach(i = first_index ... count + first_index){
+    foreach(i = first_index ... first_index + count){
         if(i < count){
             float a = float_numbers[i];
             float previous_approx = a*2;
@@ -42,6 +42,6 @@ export void compute_square_root_ispc_tasks(uniform const float float_numbers[],
                                            uniform float output[],
                                            uniform const size_t task_count){
     launch[task_count] compute_square_root_ispc_task(float_numbers, count, output);
-    
+    sync;
     return;
 }

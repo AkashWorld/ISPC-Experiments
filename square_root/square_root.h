@@ -11,7 +11,7 @@
  * Reference for computational logic:
  * https://www.math.upenn.edu/~kazdan/202F09/sqrt.pdf
  */
-__always_inline float _compute_square_root_normal(const float a){
+float _compute_square_root_normal(const float a){
     if(a < 0)
         return 0;
     const float difference = .0001; // 10^-4
