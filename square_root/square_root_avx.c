@@ -1,8 +1,9 @@
 #include <x86intrin.h>
 #include <stdlib.h>
-
+#include <stdio.h>
 void compute_square_root_avx(const float *numbers, const size_t count, float* output)
 {
+    #if defined(__AVX__) || defined(__AVX2__)
     const __m256 _of_neg_zero = _mm256_set1_ps(-0.0);
     const __m256 _difference = _mm256_set1_ps(.0001f);
     const __m256 _half = _mm256_set1_ps(.5f);
@@ -30,4 +31,7 @@ void compute_square_root_avx(const float *numbers, const size_t count, float* ou
             continue;
         }
     }
+    #else
+    fprintf(stderr, "AVX instructions are not available on this machine.\n");
+    #endif
 }

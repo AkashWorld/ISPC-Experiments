@@ -4,8 +4,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <chrono>
 
 #define FLOAT_COUNT 20000000
+
+using namespace std; 
+using Clock = chrono::steady_clock;
+using chrono::time_point;
+using chrono::duration_cast;
+using chrono::milliseconds;
+using chrono::nanoseconds;
+using namespace std::literals::chrono_literals;
 
 /*
  * Reference for computational logic:
@@ -33,10 +42,10 @@ void compute_all_square_roots_normal(const float *float_numbers,
     }
 }
 
+
 extern "C" {
     void compute_square_root_avx(const float *numbers, const size_t count, float* output);
 }
-
 
 #ifdef __cplusplus
 #endif // __cplusplus
@@ -62,6 +71,7 @@ extern "C" {
 #endif // __cplusplus
     extern void compute_square_root_ispc(const float * float_numbers, const uint32_t count, const uint32_t first_index, float * output);
     extern void compute_square_root_ispc_tasks(const float * float_numbers, const uint32_t count, float * output, const uint32_t task_count);
+    extern void test_compute_arbitrary_computation(const float * float_numbers, float * output, const uint32_t count, const uint32_t task_count);
 #if defined(__cplusplus) && (! defined(__ISPC_NO_EXTERN_C) || !__ISPC_NO_EXTERN_C )
 } /* end extern C */
 #endif // __cplusplus

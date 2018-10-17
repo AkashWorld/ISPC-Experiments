@@ -7,16 +7,20 @@
 
 
 int profile_sequential(const float *twenty_mil_fpn, float *output){
-    clock_t start, end;
+    time_point<Clock> start, end;
+    long elapsed_time_ns = 0;
+    long elapsed_time_ms = 0;    
     if(twenty_mil_fpn == NULL || output == NULL){
         fprintf(stderr, "Could not allocate %ld bytes on line %d.\n", sizeof(float) * FLOAT_COUNT, __LINE__);
         return -1;
     }
-    start = clock();
+    start = Clock::now();
     compute_all_square_roots_normal(twenty_mil_fpn, FLOAT_COUNT, output);
-    end = clock();
+    end = Clock::now();
+    elapsed_time_ns = duration_cast<nanoseconds>(end-start).count();  
+    elapsed_time_ms = duration_cast<milliseconds>(end-start).count();
     printf("Non vectorized computation of square root of %d " 
-           "floating point numbers took %ld cycles.\n", FLOAT_COUNT, end - start);
+           "floating point numbers took %ld ns (%ld ms).\n", FLOAT_COUNT, elapsed_time_ns, elapsed_time_ms);
     return 1;
 }
 
@@ -39,7 +43,9 @@ void* launch_ispc_task(void* args){
 //Launches {count} threads evenly distributed for ISPC function calls
 //Also handles remainder calculation via a remainder thread
 int profile_ispc_pthreads(const float *twenty_mil_fpn, float *output, const size_t count){
-    clock_t start, end;
+    time_point<Clock> start, end;
+    long elapsed_time_ns = 0;
+    long elapsed_time_ms = 0;    
     if(twenty_mil_fpn == NULL || output == NULL){
         fprintf(stderr, "Could not allocate %ld bytes on line %d.\n", sizeof(float) * FLOAT_COUNT, __LINE__);
         return -1;
@@ -48,7 +54,7 @@ int profile_ispc_pthreads(const float *twenty_mil_fpn, float *output, const size
     const size_t remainder_count = FLOAT_COUNT%count;
     pthread_t threads[count];
     ISPC_args args_arr[count];
-    start = clock();
+    start = Clock::now();
     for(size_t i = 0; i < count; ++i){
         args_arr[i].data_count = count_per_thread;
         args_arr[i].first_index = count_per_thread * i;
@@ -74,33 +80,43 @@ int profile_ispc_pthreads(const float *twenty_mil_fpn, float *output, const size
         pthread_join(threads[i], NULL);
     }
     pthread_join(remainder_thread, NULL);
-    end = clock();
+    end = Clock::now();
+    elapsed_time_ns = duration_cast<nanoseconds>(end-start).count();  
+    elapsed_time_ms = duration_cast<milliseconds>(end-start).count();  
     printf("ISPC %ld POSIX THREAD(S) driven computation of square root of %d "
-           "floating point numbers took %ld cycles.\n", count, FLOAT_COUNT, end - start);
+           "floating point numbers took %ld ns (%ld ms).\n", count, FLOAT_COUNT, elapsed_time_ns, elapsed_time_ms);
     return 1;
 }
 
 int profile_ispc_tasks(const float *input_numbers, float* output, const size_t task_count){
-    clock_t start, end;
-    start = clock();
+    time_point<Clock> start, end;
+    long elapsed_time_ns = 0;
+    long elapsed_time_ms = 0;  
+    start = Clock::now();
     compute_square_root_ispc_tasks(input_numbers, FLOAT_COUNT, output, task_count);
-    end = clock();
+    end = Clock::now();
+    elapsed_time_ns = duration_cast<nanoseconds>(end-start).count();  
+    elapsed_time_ms = duration_cast<milliseconds>(end-start).count();    
     printf("ISPC %ld TASK(S) driven computation of square root of %d "
-        "floating point numbers took %ld cycles.\n", task_count, FLOAT_COUNT, end - start);
+        "floating point numbers took %ld ns (%ld ms).\n", task_count, FLOAT_COUNT, elapsed_time_ns, elapsed_time_ms);
     return 1;
 }
 
 int profile_avx(const float *twenty_mil_fpn, float *output){
-    clock_t start, end;
+    time_point<Clock> start, end;
+    long elapsed_time_ns = 0;
+    long elapsed_time_ms = 0;  
     if(twenty_mil_fpn == NULL || output == NULL){
         fprintf(stderr, "Could not allocate %ld bytes on line %d.\n", sizeof(float) * FLOAT_COUNT, __LINE__);
         return -1;
     }
-    start = clock();
+    start = Clock::now();
     compute_square_root_avx(twenty_mil_fpn, FLOAT_COUNT, output);
-    end = clock();
+    end = Clock::now();
+    elapsed_time_ns = duration_cast<nanoseconds>(end-start).count();  
+    elapsed_time_ms = duration_cast<milliseconds>(end-start).count();  
     printf("AVX driven computation of square root of %d "
-           "floating point numbers took %ld cycles.\n", FLOAT_COUNT, end - start);
+           "floating point numbers took %ld ns (%ld ms).\n", FLOAT_COUNT, elapsed_time_ns, elapsed_time_ms);
     return 1;
 }
 
@@ -125,6 +141,7 @@ int main(int argc, char **argv){
         return -1;
     }
     profile_sequential(twenty_mil_fpn, output);
+    /*
     profile_ispc_pthreads(twenty_mil_fpn, output, 1);
     profile_ispc_pthreads(twenty_mil_fpn, output, 2);
     profile_ispc_pthreads(twenty_mil_fpn, output, 3);
@@ -134,7 +151,7 @@ int main(int argc, char **argv){
     profile_ispc_pthreads(twenty_mil_fpn, output, 7);
     profile_ispc_pthreads(twenty_mil_fpn, output, 8);
     profile_ispc_pthreads(twenty_mil_fpn, output, 9);
-    /*
+    */
     profile_ispc_tasks(twenty_mil_fpn, output, 1);
     profile_ispc_tasks(twenty_mil_fpn, output, 2);
     profile_ispc_tasks(twenty_mil_fpn, output, 3);
@@ -143,7 +160,6 @@ int main(int argc, char **argv){
     profile_ispc_tasks(twenty_mil_fpn, output, 6);
     profile_ispc_tasks(twenty_mil_fpn, output, 7);
     profile_ispc_tasks(twenty_mil_fpn, output, 8);
-    profile_ispc_tasks(twenty_mil_fpn, output, 9);*/
     profile_avx(twenty_mil_fpn, output);
     free(output);
     free(twenty_mil_fpn);

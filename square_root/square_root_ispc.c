@@ -45,3 +45,29 @@ export void compute_square_root_ispc_tasks(uniform const float float_numbers[],
     sync;
     return;
 }
+
+task void compute_arbitrary_computation(uniform const float input_numbers[],
+                                          uniform float output_numbers[],
+                                          uniform const size_t size)
+{
+    uniform int split_count = size/taskCount;
+    uniform int first_index = taskIndex*split_count;
+    uniform int end_index = min(first_index + split_count, size);
+    foreach(i = first_index ... end_index){
+        float a = input_numbers[i];
+        a = a*3.5;
+        a = a/2.93;
+        a *= a;
+        output_numbers[i] = a;
+    }
+}
+
+export void test_compute_arbitrary_computation(uniform const float input_numbers[],
+                                          uniform float output_numbers[],
+                                          uniform size_t size,
+                                          uniform const size_t task_count)
+{
+    launch[task_count] compute_arbitrary_computation(input_numbers, output_numbers, size);
+    sync;
+    return;
+}
