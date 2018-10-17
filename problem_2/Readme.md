@@ -11,6 +11,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
+Posix compliant standard c library.
 Ensure that the environmental PATH has access to the following:
 g++, gcc, python3, and ispc
 
