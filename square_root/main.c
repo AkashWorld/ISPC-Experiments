@@ -45,7 +45,7 @@ int profile_ispc_pthreads(const float *twenty_mil_fpn, float *output, const size
         return -1;
     }
     const size_t count_per_thread = FLOAT_COUNT/count;
-    const size_t remainder_count = FLOAT_COUNT/count;
+    const size_t remainder_count = FLOAT_COUNT%count;
     pthread_t threads[count];
     ISPC_args args_arr[count];
     start = clock();
